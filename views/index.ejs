@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Posts</title>
-</head>
+    <%- include('./partials/header') %>
 <body>
-    <h1>Posts</h1>
-    <ul>
+    <h1 class="text-2xl bg-blue-700">Posts</h1>
+    <ul >
+        
         <% posts.forEach(post => { %>
-            <li><strong><%= post.title %></strong><br><%= post.body %></li>
+            <li class="mb-6 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"><strong class="text-green-800"><%= post.title %></strong><br><p class="text-red-800"><%= post.body %></p></li>
         <% }) %>
+
     </ul>
-    
+    <%- include('./partials/footer') %>
 </body>
 </html>
