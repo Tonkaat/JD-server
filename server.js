@@ -1,22 +1,14 @@
-const { name } = require("ejs");
 const express = require("express");
-const app = express()
+const app = express();
+const PORT = 4000;
+
+// Import Routes
+const pokemonRoutes = require("./routers");
+
 app.set("view engine", "ejs");
-app.set("views", "./views");
-const port = 4000;
-const axios = require("axios");
+app.use(express.static("public"));
 
-const userRouter = require("./routers/users");
-app.use("/users", userRouter);
+// Use the API Routes
+app.use("/", pokemonRoutes);
 
-app.get("/", async (req, res) => {
-  try {
-    const response = await
-axios.get('https://jsonplaceholder.typicode.com/posts');
-    res.render('index', {posts: response.data});
-  } catch (error) {
-    res.status(500).send('Error fectching data');
-  }
-});
-
-app.listen(port, () => console.log(`Server running on port ${port}`));
+app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));

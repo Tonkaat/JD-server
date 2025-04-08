@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex - <%= pokemon.name %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            font-family: "Press Start 2P", cursive;
+        }
+        .pokedex-container {
+            max-width: 500px;
+            background: #d32f2f;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border: 5px solid black;
+        }
+        .screen {
+            background: #222;
+            border: 4px solid #000;
+            padding: 15px;
+            border-radius: 10px;
+        }
+    
+        .stat-bar {
+            height: 10px;
+            background: yellow;
+            border-radius: 9999px;
+            width: 0%;
+            animation: fillBar 1s ease-in-out forwards, float 2s ease-in-out infinite;
+        }
+    
+        .hover-box:hover {
+            transform: scale(1.1);
+            transition: transform 0.3s ease-in-out;
+        }
+    
+        .ability-badge {
+            background: #7158e2;
+            color: white;
+            display: inline-block;
+            padding: 3px 6px;
+            border-radius: 4px;
+            margin: 2px;
+            font-size: 0.65rem;
+        }
+    
+        .ability-badge:hover {
+            transform: scale(1.1);
+            transition: transform 0.3s ease-in-out;
+        }
+    
+        @keyframes float {
+            0% {
+                box-shadow: 0 5px 10px 0px rgba(0,0,0,0.6);
+                transform: translateY(0px);
+            }
+            50% {
+                box-shadow: 0 5px 7px 0px rgba(0,0,0,0.2);
+                transform: translateY(-3px);
+            }
+            100% {
+                box-shadow: 0 7px 10px 0px rgba(0,0,0,0.6);
+                transform: translateY(0px);
+            }
+        }
+    
+        .float-animation {
+            animation: float 1s ease-in-out infinite;
+        }
+    
+        @keyframes fillBar {
+            from {
+                width: 0%;
+            }
+            to {
+                width: var(--final-width);
+            }
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen">
+    <div class="pokedex-container">
+        <div class="screen text-center text-white ">
+            <img src="<%= pokemon.sprites.other['official-artwork'].front_default %>" alt="<%= pokemon.name %>" class="w-40 mx-auto">
+            <h1 class="text-2xl mt-4 capitalize"><%= pokemon.name %></h1>
+            <p class="text-sm opacity-80 mt-2"><%= description %></p>
+        </div>
+
+        <!-- Abilities -->
+        <div class="mt-6 text-white">
+            <h2 class="text-sm font-bold">Abilities</h2>
+            <div class="mt-1">
+                <% pokemon.abilities.forEach(ability => { %>
+                    <span class="ability-badge <%= ability.is_hidden ? 'opacity-75' : '' %>">
+                        <%= ability.ability.name.replace('-', ' ') %><%= ability.is_hidden ? ' (Hidden)' : '' %>
+                    </span>
+                <% }); %>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="mt-6 text-white">
+            <h2 class="text-lg font-bold">Stats</h2>
+            <% pokemon.stats.forEach(stat => { %>
+                <p class="text-sm mt-2"><%= stat.stat.name.toUpperCase() %>: <%= stat.base_stat %></p>
+                <div class="bg-gray-600 rounded-full w-full h-2">
+                    <div class="stat-bar" style="--final-width: <%= Math.min(stat.base_stat, 100) %>%;"></div>
+                </div>
+            <% }); %>
+        </div>
+        <!-- Body Info -->
+        <div class="mt-6 text-white grid grid-cols-2 gap-6">
+            <div class="p-3 bg-black rounded-lg text-center hover-box">
+                <p class="text-sm">Height</p>
+                <p class="font-bold"><%= pokemon.height / 10 %>m</p>
+            </div>
+            <div class="p-3 bg-black rounded-lg text-center hover-box">
+                <p class="text-sm">Weight</p>
+                <p class="font-bold"><%= pokemon.weight / 10 %>kg</p>
+            </div>
+        </div>
+        
+        <!-- Moves -->
+        <div class="mt-6 text-white">
+            <h2 class="text-lg font-bold">Moves</h2>
+            <div class="flex flex-wrap gap-3 mt-2">
+                <% pokemon.moves.slice(0, 5).forEach(move => { %>
+                    <span class="bg-blue-500 px-3 py-1 rounded-lg text-xs hover-box"><%= move.move.name.replace('-', ' ') %></span>
+                <% }); %>
+            </div>
+        </div>
+        
+        <!-- Back Button -->
+        <div class="mt-8 text-center">
+            <button onclick="window.history.back()" class="bg-black text-white px-5 py-3 rounded-lg hover-box">Back</button>
+        </div>
+    </div>
+</body>
+
+
+</html>

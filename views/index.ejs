@@ -1,15 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('./partials/header') %>
-<body>
-    <h1 class="text-2xl bg-blue-700">Posts</h1>
-    <ul >
-        
-        <% posts.forEach(post => { %>
-            <li class="mb-6 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"><strong class="text-green-800"><%= post.title %></strong><br><p class="text-red-800"><%= post.body %></p></li>
-        <% }) %>
-
-    </ul>
-    <%- include('./partials/footer') %>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            font-family: "Press Start 2P", cursive;
+        }
+        .pokedex {
+            background: #d32f2f;
+            border: 8px solid black;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            padding: 20px;
+            box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        .pokedex-screen {
+            background: #222;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            color: white;
+            box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.2);
+        }
+        .pokedex-title {
+            text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3);
+            animation: glow 1.5s infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 4px 4px 10px yellow; }
+            to { text-shadow: 4px 4px 20px red; }
+        }
+        .pokemon-card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            background: #fafafa;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+        .pokemon-card:hover {
+            transform: scale(1.1) rotate(-2deg);
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.9);
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .button {
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #fbc02d, #f57c00);
+            border: 3px solid black;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0px 5px 0px black;
+            transition: all 0.2s;
+        }
+        .button:active {
+            box-shadow: 0px 2px 0px black;
+            transform: translateY(3px);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center text-white">
+    <div class="pokedex mt-10">
+        <header class="text-3xl md:text-5xl font-bold text-center pokedex-title">
+            Pokédex
+        </header>
+        <div class="pokedex-screen mt-6">
+            <p>Select a Pokémon</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6 mt-4">
+            <% pokemons.forEach((pokemon, index) => { %>
+                <a href="/pokemon/<%= index + 1 %>" class="pokemon-card">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/<%= index + 1 %>.png" 
+                         alt="<%= pokemon.name %>" 
+                         class="mx-auto w-20 h-20">
+                    <h5 class="mt-2 text-center text-md capitalize text-black">
+                        <%= pokemon.name %> <%= pokemon.id %>
+                    </h5>
+                </a>
+            <% }); %>
+        </div>
+        <div class="buttons">
+            <div class="button"></div>
+            <div class="button"></div>
+            <div class="button"></div>
+        </div>
+    </div>
+    <footer class="text-center p-4 text-md mt-6">
+        <p class="opacity-80">Pokédex 2024 Tonkaat's Edition</p>
+    </footer>
 </body>
 </html>
