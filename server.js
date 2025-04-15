@@ -2,66 +2,53 @@ const express = require("express");
 const app = express();
 
 app.set("view engine", "ejs");
-app.set("views", "./views");
+app.use(express.urlencoded({extended: true }));
+app.use(express.static("public"));
 
 const port = 4000;
 
-app.use(express.json()); // middleware
+app.use(express.json()); // middleware  
 
-const users = [
-  { id: 1, name: "Richard Majos" },
-  { id: 2, name: "Jaypi Yazimerz" },
-  { id: 3, name: "Mark Escober" },
+let users = [
+  { id: 1, name: "Richard Majos", email: "richard@gmail.com" },
+  { id: 2, name: "Jaypi Yazimerz", email: "jaypi@gmail.com" },
+  { id: 3, name: "Mark Escober", email: "mark@gmail.com" },
 ];
 
-app.get("/", (req, res) => {
-  res.send("Homepage");
-});
-
 app.get("/users", (req, res) => {
-  res.json(users);
+  res.render("index", { users });
 });
 
-app.get("/users/:id", (req, res) => {
-  const user = users.find((u) => u.id === parseInt(req.params.id));
-  if (user) {
-    res.json(user);
-  } else {
-    res.status(404).send("User not found");
-  }
+app.get("/users/new", (req, res) => {
+  res.render("new");
 });
 
 app.post("/users", (req, res) => {
-  const newUser = {
-    id: req.body.id,
-    name: req.body.name,
-  }
+  const { name, email } = req.body;
+  const newUser = { id: Date.now(), name, email};
 
   users.push(newUser);
-
-  res.status(201).json(newUser);
+  res.redirect("/users");
 });
 
-app.put("/users/:id", (req, res) => {
-  const user = users.find((u) => u.id === parseInt(req.params.id));
+app.get("/users/:id/edit", (req, res) => {
+  const user = users.find((u) => u.id == req.params.id);
+  res.render("edit", { user });
+});
+
+app.post("/users/:id", (req, res) => {
+  const { name, email } = req.body;
+  const user = users.find((u) => u.id == req.params.id);
   if (user) {
-    user.id = req.body.id,
-    user.name = req.body.name;
-    res.json(user);
-  } else {
-    res.status(404).send("User not found");
+    user.name = name;
+    user.email = email;
   }
+  res.redirect("/users");
 });
 
-app.delete("/users/:id", (req, res) => {
-  const userIndex = users.findIndex((u) => u.id === parseInt(req.params.id));
-  
-  if (userIndex !== -1) {
-    users.splice(userIndex, 1);
-    res.send("User deleted");
-  } else {
-    res.status(404).send("User not found");
-  }
+app.post("/users/:id/delete", (req, res) => {
+  users = users.filter((u) => u.id != req.params.id);
+  res.redirect("/users");
 });
 
 
