@@ -1,68 +1,108 @@
-const express = require("express");
+const express = require('express');
+const path = require('path');
+const fs = require('fs');
+const db = require('./db');
 const app = express();
-const db = require("./db");
+const port = process.env.PORT || 3000;
 
+// View engine setup
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Middleware
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.urlencoded({ extended: true }));
-app.set("view engine", "ejs");
-app.use(express.static("public"));
+app.use(express.json());
 
-const PORT = 4000;
+// For handling file uploads without multer
+app.use(express.raw({
+  type: ['image/*', 'application/pdf'],
+  limit: '5mb' // 5MB limit
+}));
 
- 
+// Helper function to save file data
+function saveFile(fileData, fileType) {
+  const fileExt = fileType.split('/')[1];
+  const fileName = `${Date.now()}.${fileExt}`;
+  const filePath = path.join(__dirname, 'uploads', fileName);
+  
+  fs.writeFileSync(filePath, fileData);
+  return fileName;
+}
 
-// GET: All users
-app.get("/users", (req, res) => {
-  const users = db.prepare("SELECT * FROM users").all();
-  res.render("index", { users });
+// Routes
+app.get('/', (req, res) => {
+  res.render('home');
 });
 
-// GET: New user form
-app.get("/users/new", (req, res) => {
-  res.render("new");
+app.get('/apply', (req, res) => {
+  res.render('application');
 });
 
-// POST: Create new user
-app.post("/users", (req, res) => {
-  const { name, email } = req.body;
-  db.prepare("INSERT INTO users (name, email) VALUES (?, ?)").run(name, email);
-  res.redirect("/users");
+// Get all applications (for homepage display)
+app.get('/applications', (req, res) => {
+  const applications = db.prepare('SELECT * FROM applicants ORDER BY applicationDate DESC').all();
+  res.render('applications', { applications });
 });
 
-// GET: Edit user form
-app.get("/users/:id/edit", (req, res) => {
-  const user = db
-    .prepare("SELECT * FROM users WHERE id = ?")
-    .get(req.params.id);
-  res.render("edit", { user });
+// Handle application form data
+app.post('/submit', (req, res) => {
+  try {
+    // Extract form data
+    const {
+      firstName, lastName, middleName, suffix, contact, gender, 
+      birthdate, nationality, country, address, schoolName, 
+      academicStrand, academicTrack, yearGraduated, 
+      programChoice1, programChoice2, programChoice3,
+      examDate, schoolYear, semester,
+      paymentProofData, paymentProofType
+    } = req.body;
+
+    // Prepare statement for insertion
+    const stmt = db.prepare(`INSERT INTO applicants (
+      firstName, lastName, middleName, suffix, contact, gender,
+      birthdate, nationality, country, address, schoolName,
+      academicStrand, academicTrack, yearGraduated,
+      programChoice1, programChoice2, programChoice3,
+      examDate, schoolYear, semester, paymentProofData, paymentProofType
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+
+    // Insert data
+    const result = stmt.run(
+      firstName, lastName, middleName, suffix, contact, gender,
+      birthdate, nationality, country, address, schoolName,
+      academicStrand, academicTrack, yearGraduated,
+      programChoice1, programChoice2, programChoice3,
+      examDate, schoolYear, semester, paymentProofData, paymentProofType
+    );
+
+    // Get the inserted ID and redirect
+    res.redirect('/success?id=' + result.lastInsertRowid);
+  } catch (error) {
+    console.error('Error submitting application:', error);
+    res.status(500).send('Error submitting application. Please try again.');
+  }
 });
 
-// POST: Update user
-app.post("/users/:id", (req, res) => {
-  const { name, email } = req.body;
-  db.prepare("UPDATE users SET name = ?, email = ? WHERE id = ?").run(
-    name,
-    email,
-    req.params.id
-  );
-  res.redirect("/users");
+// API endpoint to handle file uploads separately
+app.post('/upload-payment-proof', (req, res) => {
+  try {
+    const contentType = req.headers['content-type'];
+    const fileName = saveFile(req.body, contentType);
+    res.json({ success: true, fileName });
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    res.status(500).json({ success: false, error: 'Error uploading file' });
+  }
 });
 
-// POST: Delete user
-app.post("/users/:id/delete", (req, res) => {
-  db.prepare("DELETE FROM users WHERE id = ?").run(req.params.id);
-  res.redirect("/users");
+app.get('/success', (req, res) => {
+  const applicationId = req.query.id;
+  res.render('success', { applicationId });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+// Start the server
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
 });
-
-//to check your db's content via the web
-app.get("/debug", (req, res) => {
-  const users = db.prepare("SELECT * FROM users").all();
-  res.json(users);
-});
-
-
-

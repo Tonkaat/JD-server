@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Applications | Mindanao Kokusai Daigaku</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <img src="/img/mkd-logo.png" alt="Mindanao Kokusai Daigaku Logo" height="60">
+        Mindanao Kokusai Daigaku
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/apply">Apply</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/applications">Applications</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4 mb-5">
+    <div class="card shadow-lg">
+      <div class="card-header bg-primary text-white">
+        <h3 class="text-center mb-0">Student Applications</h3>
+      </div>
+      <div class="card-body">
+        <% if (applications && applications.length > 0) { %>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead class="table-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Program Choices</th>
+                  <th>School Year</th>
+                  <th>Semester</th>
+                  <th>Application Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% applications.forEach(app => { %>
+                  <tr>
+                    <td><%= app.id %></td>
+                    <td><%= app.lastName %>, <%= app.firstName %> <%= app.middleName %> <%= app.suffix %></td>
+                    <td><%= app.contact %></td>
+                    <td>
+                      <ol class="mb-0 ps-3">
+                        <li><%= app.programChoice1 %></li>
+                        <li><%= app.programChoice2 %></li>
+                        <li><%= app.programChoice3 %></li>
+                      </ol>
+                    </td>
+                    <td><%= app.schoolYear %></td>
+                    <td><%= app.semester %></td>
+                    <td><%= new Date(app.applicationDate).toLocaleDateString() %></td>
+                    <td>
+                      <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#detailModal<%= app.id %>">
+                        <i class="bi bi-eye"></i> View
+                      </button>
+                    </td>
+                  </tr>
+                  
+                  <!-- Detail Modal for each application -->
+                  <div class="modal fade" id="detailModal<%= app.id %>" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                          <h5 class="modal-title">Application #<%= app.id %> Details</h5>
+                          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <h6 class="fw-bold">Personal Information</h6>
+                              <p><strong>Name:</strong> <%= app.firstName %> <%= app.middleName %> <%= app.lastName %> <%= app.suffix %></p>
+                              <p><strong>Gender:</strong> <%= app.gender %></p>
+                              <p><strong>Birthdate:</strong> <%= app.birthdate %></p>
+                              <p><strong>Contact:</strong> <%= app.contact %></p>
+                              <p><strong>Nationality:</strong> <%= app.nationality %></p>
+                              <p><strong>Country:</strong> <%= app.country %></p>
+                              <p><strong>Address:</strong> <%= app.address %></p>
+                            </div>
+                            <div class="col-md-6">
+                              <h6 class="fw-bold">Educational Background</h6>
+                              <p><strong>School Name:</strong> <%= app.schoolName %></p>
+                              <p><strong>Academic Track:</strong> <%= app.academicTrack %></p>
+                              <p><strong>Academic Strand:</strong> <%= app.academicStrand %></p>
+                              <p><strong>Year Graduated:</strong> <%= app.yearGraduated %></p>
+                              
+                              <h6 class="fw-bold mt-4">Course Preferences</h6>
+                              <p><strong>First Choice:</strong> <%= app.programChoice1 %></p>
+                              <p><strong>Second Choice:</strong> <%= app.programChoice2 %></p>
+                              <p><strong>Third Choice:</strong> <%= app.programChoice3 %></p>
+                              <p><strong>Exam Date:</strong> <%= app.examDate %></p>
+                              <p><strong>School Year:</strong> <%= app.schoolYear %></p>
+                              <p><strong>Semester:</strong> <%= app.semester %></p>
+                            </div>
+                          </div>
+                          
+                          <% if (app.paymentProof) { %>
+                          <div class="row mt-3">
+                            <div class="col-12">
+                              <h6 class="fw-bold">Payment Proof</h6>
+                              <% if (app.paymentProof.toLowerCase().endsWith('.pdf')) { %>
+                                <a href="/uploads/<%= app.paymentProof %>" target="_blank" class="btn btn-sm btn-secondary">
+                                  <i class="bi bi-file-earmark-pdf"></i> View PDF
+                                </a>
+                              <% } else { %>
+                                <img src="/uploads/<%= app.paymentProof %>" class="img-thumbnail" style="max-height: 200px;" alt="Payment Proof">
+                              <% } %>
+                            </div>
+                          </div>
+                          <% } %>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle me-2"></i> No applications have been submitted yet.
+          </div>
+          <div class="text-center mt-4">
+            <a href="/apply" class="btn btn-primary">Submit an Application</a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-dark text-white py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <h5>Contact Us</h5>
+          <address>
+            123 University Avenue<br>
+            Davao City, Philippines<br>
+            <i class="bi bi-telephone me-2"></i> (123) 456-7890<br>
+            <i class="bi bi-envelope me-2"></i> admissions@mkd.edu.ph
+          </address>
+        </div>
+        <div class="col-md-4">
+          <h5>Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-white">About Us</a></li>
+            <li><a href="#" class="text-white">Academic Programs</a></li>
+            <li><a href="#" class="text-white">Campus Life</a></li>
+            <li><a href="#" class="text-white">Research</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h5>Follow Us</h5>
+          <div class="social-icons">
+            <a href="#" class="text-white me-3"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="text-white me-3"><i class="bi bi-twitter"></i></a>
+            <a href="#" class="text-white me-3"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="text-white me-3"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+      <hr class="my-3 bg-light">
+      <div class="text-center">
+        <p>&copy; 2025 Mindanao Kokusai Daigaku. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
