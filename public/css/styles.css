@@ -2,9 +2,9 @@
 
 /* Global Styles */
 :root {
-    --primary-color: #0d47a1;
-    --secondary-color: #1565c0;
-    --accent-color: #42a5f5;
+    --primary-color: #042a63;
+    --secondary-color: #001e3f;
+    --accent-color: #CD9B36;
     --light-color: #f5f5f5;
     --dark-color: #212121;
     --border-radius: 0.5rem;
@@ -21,6 +21,7 @@
   .navbar {
     padding: 0.75rem 0;
     box-shadow: 0 2px 10px rgba(0,0,0,.1);
+    background-color: rgb(8, 14, 103);
   }
   
   .navbar-brand {
@@ -34,6 +35,11 @@
     filter: drop-shadow(0 2px 4px rgba(0,0,0,.2));
   }
   
+
+  .section-2 {
+    color: white;
+    background-color: #042a63;
+  }
   /* Card Styling */
   .card {
     border: none;
@@ -77,6 +83,7 @@
     font-weight: 500;
     transition: all 0.3s ease;
   }
+
   
   .btn-primary {
     background-color: var(--primary-color);
@@ -91,6 +98,7 @@
   }
   
   /* Feature Icons */
+
   .feature-icon {
     width: 70px;
     height: 70px;
@@ -106,7 +114,7 @@
   
   /* Footer Styling */
   footer {
-    background-color: var(--dark-color);
+    background-color: rgb(8, 14, 103);
   }
   
   .social-icons a {
