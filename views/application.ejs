@@ -228,14 +228,14 @@
           const reader = new FileReader();
           
           reader.onload = async function(e) {
-            // Convert file to base64
+            // Convert file
             const base64String = e.target.result;
             
-            // Set hidden inputs
+            // hidden inputs
             dataInput.value = base64String;
             typeInput.value = file.type;
             
-            // Submit the form
+            // Submit form
             form.submit();
           };
           

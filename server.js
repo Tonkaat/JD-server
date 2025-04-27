@@ -15,7 +15,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// For handling file uploads without multer
+// handling file uploads
 app.use(express.raw({
   type: ['image/*', 'application/pdf'],
   limit: '5mb' // 5MB limit

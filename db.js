@@ -12,7 +12,7 @@ if (!fs.existsSync(uploadsDir)) {
 // Connect to database
 const db = betterSqlite3(dbPath);
 
-// Create tables if they don't exist
+
 db.exec(`CREATE TABLE IF NOT EXISTS applicants (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   firstName TEXT NOT NULL,
